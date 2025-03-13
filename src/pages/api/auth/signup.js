@@ -7,18 +7,34 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   await db;
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
-  // Find user
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ error: "Invalid email or password" });
+  console.log("🔍 Sign-up Request:", { username, email, password });
 
-  // Compare password
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ error: "Invalid email or password" });
+  // 🔹 Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    console.log("❌ User already exists:", email);
+    return res.status(400).json({ error: "User already exists" });
+  }
 
-  // Generate JWT token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  // 🔹 Hash password before saving
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("✅ Hashed Password:", hashedPassword);
 
-  res.json({ token, userId: user._id, username: user.username });
+    // 🔹 Save new user in database
+    const newUser = new User({ username, email, password: hashedPassword });
+    await newUser.save();
+    console.log("✅ User created successfully:", email);
+
+    // 🔹 Generate JWT token
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    return res.status(201).json({ token, userId: newUser._id, message: "User registered successfully" });
+  } catch (error) {
+    console.error("❌ Error hashing password:", error);
+    return res.status(500).json({ error: "Error creating user" });
+  }
 }
+

@@ -14,7 +14,15 @@ export default async function handler(req, res) {
   }
 
   const { client, project, task, billable } = req.body;
-  const newEntry = new TimeEntry({ userId: req.body.userId, client, project, task, startTime: new Date(), billable });
+  const newEntry = new TimeEntry({
+    userId: req.body.userId,
+    client,
+    project,
+    task,
+    startTime: new Date(),
+    duration: 0,
+    billable,
+  });
   await newEntry.save();
 
   return res.json({ success: true, entry: newEntry });

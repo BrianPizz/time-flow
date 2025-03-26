@@ -8,17 +8,20 @@ export function signToken(user) {
   return jwt.sign({ data: payload }, JWT_SECRET, { expiresIn: EXPIRATION });
 }
 
-export function authMiddleware(req) {
-  let token = req.headers.authorization?.split(" ")[1];
+export function verifyToken(req) {
+  const token = req.headers.authorization?.split(" ")[1];
 
-  if (!token) return req;
+  console.log("🔐 Incoming Auth Header:", req.headers.authorization);
+  console.log("🔐 Extracted Token:", token);
+
+  if (!token) throw new Error("No token");
 
   try {
-    const { data } = jwt.verify(token, JWT_SECRET);
-    req.user = data;
+    const  data  = jwt.verify(token, JWT_SECRET);
+    console.log("✅ Decoded JWT Data:", data);
+    return data;
   } catch (error) {
-    console.error("Invalid token:", error);
+    console.error("❌ Invalid token:", error.message);
+    throw new Error("Unauthorized");
   }
-
-  return req;
 }

@@ -1,16 +1,10 @@
 import mongoose from "mongoose";
 
 const IntervalSchema = new mongoose.Schema({
-    start: {
-        type: Date,
-        required: true,
-    },
-    end: {
-        type: Date,
-        required: true,
-    },
-});
-
+    start: { type: Date, required: true },
+    end: { type: Date, default: null } // null means the interval is still running
+  });
+  
 const TimeEntrySchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,

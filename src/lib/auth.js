@@ -11,14 +11,10 @@ export function signToken(user) {
 export function verifyToken(req) {
   const token = req.headers.authorization?.split(" ")[1];
 
-  console.log("🔐 Incoming Auth Header:", req.headers.authorization);
-  console.log("🔐 Extracted Token:", token);
-
   if (!token) throw new Error("No token");
 
   try {
-    const  data  = jwt.verify(token, JWT_SECRET);
-    console.log("✅ Decoded JWT Data:", data);
+    const data = jwt.verify(token, JWT_SECRET);
     return data;
   } catch (error) {
     console.error("❌ Invalid token:", error.message);

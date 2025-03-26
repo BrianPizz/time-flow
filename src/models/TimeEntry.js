@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+const IntervalSchema = new mongoose.Schema({
+    start: {
+        type: Date,
+        required: true,
+    },
+    end: {
+        type: Date,
+        required: true,
+    },
+});
+
 const TimeEntrySchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,13 +32,7 @@ const TimeEntrySchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    startTime: {
-        type: Date,
-        required: true,
-    },
-    endTime: {
-        type: Date, // null if not ended
-    },
+    intervals: [IntervalSchema], // array of start/end intervals
     duration: {
         type: Number, // in seconds
         required: true,

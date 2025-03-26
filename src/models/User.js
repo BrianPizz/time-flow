@@ -31,19 +31,6 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-// 🔹 Middleware to Hash Password Before Saving
-UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next(); // Only hash if password is modified
-
-  try {
-    const saltRounds = 10;
-    this.password = await bcrypt.hash(this.password, saltRounds);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
 // 🔹 Method to Compare Passwords
 UserSchema.methods.isCorrectPassword = async function (password) {
   return bcrypt.compare(password, this.password);

@@ -11,14 +11,25 @@ export default async function handler(req, res) {
 
   // Find user
   const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ error: "Invalid email or password" });
+  if (!user)
+    return res.status(400).json({ error: "Invalid email or password" });
+
+  console.log("User:", user);
+  console.log("Stored password:", user.password);
+  console.log("Input password:", password);
+  const isMatch = await bcrypt.compare(password, user.password);
+  console.log("Password match:", isMatch);
+
 
   // Compare password
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ error: "Invalid email or password" });
+  // const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch)
+    return res.status(400).json({ error: "Invalid email or password" });
 
   // Generate JWT token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 
   res.json({ token, userId: user._id });
 }

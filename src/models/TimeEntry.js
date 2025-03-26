@@ -41,6 +41,11 @@ const TimeEntrySchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
+    status: {
+        type: String,
+        enum: ["running", "paused", "stopped"],
+        default: "paused"
+      },
 });
 
 export default mongoose.models.TimeEntry || mongoose.model("TimeEntry", TimeEntrySchema);   

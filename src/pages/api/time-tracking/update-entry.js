@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const { id, client, project, task, description, billable, duration } = req.body;
+  const { id, client, project, task, description, billable, duration, intervals } = req.body;
 
   if (!id) return res.status(400).json({ error: "Missing entry ID" });
 
@@ -23,6 +23,22 @@ export default async function handler(req, res) {
 
   if (entry.userId.toString() !== req.body.userId) {
     return res.status(403).json({ error: "Forbidden" });
+  }
+  // manual interval update
+  if (intervals !== undefined && Array.isArray(intervals)) {
+    entry.intervals = intervals;
+  }
+  
+  if (intervals !== undefined && Array.isArray(intervals)) {
+    entry.intervals = intervals;
+  
+    // Auto-calculate total duration in seconds
+    entry.duration = intervals.reduce((sum, interval) => {
+      if (interval.start && interval.end) {
+        return sum + Math.floor((new Date(interval.end) - new Date(interval.start)) / 1000);
+      }
+      return sum;
+    }, 0);
   }
 
   if (client !== undefined) entry.client = client;

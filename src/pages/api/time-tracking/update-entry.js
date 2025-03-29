@@ -14,25 +14,22 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const { id, client, project, task, description, billable, endTime, duration } = req.body;
+  const { id, client, project, task, description, billable, duration } = req.body;
 
   if (!id) return res.status(400).json({ error: "Missing entry ID" });
 
   const entry = await TimeEntry.findById(id);
   if (!entry) return res.status(404).json({ error: "Time entry not found" });
 
-  // Make sure only the owner can update
   if (entry.userId.toString() !== req.body.userId) {
     return res.status(403).json({ error: "Forbidden" });
   }
 
-  // Update fields if provided
   if (client !== undefined) entry.client = client;
   if (project !== undefined) entry.project = project;
   if (task !== undefined) entry.task = task;
   if (description !== undefined) entry.description = description;
   if (billable !== undefined) entry.billable = billable;
-  if (endTime !== undefined) entry.endTime = new Date(endTime);
   if (duration !== undefined) entry.duration = duration;
 
   await entry.save();

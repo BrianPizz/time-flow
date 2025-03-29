@@ -7,13 +7,28 @@ import { fetchEntries } from "@/lib/api";
 export default function Dashboard() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (!savedToken) {
+      window.location.href = "/login";
+    } else {
+      setToken(savedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+
     fetchEntries().then((data) => {
       setEntries(data);
       setLoading(false);
+    }).catch((err) => {
+      console.error("❌ Error fetching entries:", err.message);
+      setLoading(false);
     });
-  }, []);
+  }, [token]);
 
   return (
     <Container maxWidth="md">

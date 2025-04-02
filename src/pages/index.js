@@ -8,6 +8,7 @@ export default function Dashboard() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -15,6 +16,7 @@ export default function Dashboard() {
       window.location.href = "/login";
     } else {
       setToken(savedToken);
+      setAuthenticated(true);
     }
   }, []);
 
@@ -29,6 +31,10 @@ export default function Dashboard() {
       setLoading(false);
     });
   }, [token]);
+
+  if (!authenticated) {
+    return null;
+  }
 
   return (
     <Container maxWidth="md">

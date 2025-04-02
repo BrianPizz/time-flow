@@ -5,6 +5,7 @@ import {
   Container,
   Typography,
   Box,
+  Link,
   styled,
 } from "@mui/material";
 
@@ -129,6 +130,12 @@ export default function LoginPage() {
           >
             Login
           </Button>
+          <Typography sx={{ textAlign: "center", mt: 2 }}>
+            Don’t have an account?{" "}
+            <Link href="/signup" variant="body2">
+              Sign up
+            </Link>
+          </Typography>
         </form>
       </Card>
     </SignInContainer>
